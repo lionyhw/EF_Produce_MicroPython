@@ -4,12 +4,14 @@ from machine import time_pulse_us
 
 TPbot_ADDR = 0x10
 
+
 class TPBOT(object):
     """基本描述
 
     TPBot（天蓬）智能车
 
     """
+
     def __init__(self):
         i2c.init()
         self.__direction = 0
@@ -29,7 +31,7 @@ class TPBOT(object):
         if left_wheel_speed > 100 or left_wheel_speed < -100:
             raise ValueError('speed error,-100~100')
         if right_wheel_speed > 100 or right_wheel_speed < -100:
-            raise ValueError('select motor error,1,2,3,4')
+            raise ValueError('speed error,-100~100')
         self.__direction = 0x00 if left_wheel_speed > 0 else 0x01
         self.__direction = self.__direction if right_wheel_speed > 0 else self.__direction + 2
         left_wheel_speed = left_wheel_speed if left_wheel_speed > 0 else left_wheel_speed * -1
@@ -104,5 +106,5 @@ class TPBOT(object):
 if __name__ == '__main__':
     tp = TPBOT()
 
-    tp.set_motors(1, 100)
+    tp.set_motors()
     tp.get_distance()
