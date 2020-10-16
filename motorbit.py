@@ -10,7 +10,6 @@ class MOTORBIT(object):
 
     def __init__(self):
         i2c.init()
-        self.__direction = 0
         self.__left_io = pin8
         self.__left_pwm = pin1
         self.__right_io = pin12
