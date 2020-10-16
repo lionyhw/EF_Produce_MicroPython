@@ -2,26 +2,22 @@ from microbit import *
 from time import sleep_us
 from machine import time_pulse_us
 
-CUTEBOT_ADDR = 0x10
-left = 0x04
-right = 0x08
+TPbot_ADDR = 0x10
 
-
-class CUTEBOT(object):
+class TPBOT(object):
     """基本描述
 
-    Cutebot（酷比特）智能赛车
+    TPBot（天蓬）智能车
 
     """
-
     def __init__(self):
         i2c.init()
-        self.__pin_e = pin8
-        self.__pin_t = pin12
+        self.__direction = 0
         self.__pinL = pin13
         self.__pinR = pin14
-        self.__pinL.set_pull(self.__pinL.PULL_UP)
-        self.__pinR.set_pull(self.__pinR.PULL_UP)
+        self.__pinL.set_pull(self.__pinL.NO_PULL)
+        self.__pinR.set_pull(self.__pinR.NO_PULL)
+        self.__pin_sonar = pin16
 
     def set_motors_speed(self, left_wheel_speed: int, right_wheel_speed: int):
         """
@@ -34,17 +30,15 @@ class CUTEBOT(object):
             raise ValueError('speed error,-100~100')
         if right_wheel_speed > 100 or right_wheel_speed < -100:
             raise ValueError('select motor error,1,2,3,4')
-        left_direction = 0x02 if left_wheel_speed > 0 else 0x01
-        right_direction = 0x02 if right_wheel_speed > 0 else 0x01
+        self.__direction = 0x00 if left_wheel_speed > 0 else 0x01
+        self.__direction = self.__direction if right_wheel_speed > 0 else self.__direction + 2
         left_wheel_speed = left_wheel_speed if left_wheel_speed > 0 else left_wheel_speed * -1
         right_wheel_speed = right_wheel_speed if right_wheel_speed > 0 else right_wheel_speed * -1
-        i2c.write(CUTEBOT_ADDR, bytearray([0x01, left_direction, left_wheel_speed, 0]))
-        i2c.write(CUTEBOT_ADDR, bytearray([0x02, right_direction, right_wheel_speed, 0]))
+        i2c.write(TPbot_ADDR, bytearray([0x01, left_wheel_speed, right_wheel_speed, self.__direction]))
 
-    def set_car_light(self, light: int, R: int, G: int, B: int):
+    def set_car_light(self, R: int, G: int, B: int):
         """
         设置车头灯颜色
-        :param light:选择车灯
         :param R:R通道颜色0-255
         :param G:G通道颜色0-255
         :param B:B通道颜色0-255
@@ -52,7 +46,7 @@ class CUTEBOT(object):
         """
         if R > 255 or G > 255 or B > 255:
             raise ValueError('RGB is error')
-        i2c.write(CUTEBOT_ADDR, bytearray([light, R, G, B]))
+        i2c.write(TPbot_ADDR, bytearray([0x20, R, G, B]))
 
     def get_distance(self, unit: int = 0):
         """
@@ -60,11 +54,11 @@ class CUTEBOT(object):
         :param unit:检测距离单位 0 厘米 1 英尺
         :return:距离
         """
-        self.__pin_e.read_digital()
-        self.__pin_t.write_digital(1)
+        self.__pin_sonar.read_digital()
+        self.__pin_sonar.write_digital(1)
         sleep_us(10)
-        self.__pin_t.write_digital(0)
-        ts = time_pulse_us(self.__pin_e, 1, 25000)
+        self.__pin_sonar.write_digital(0)
+        ts = time_pulse_us(self.__pin_sonar, 1, 25000)
 
         distance = ts * 9 / 6 / 58
         if unit == 0:
@@ -97,19 +91,18 @@ class CUTEBOT(object):
         选择伺服电机并且设置角度/速度
 
         Args:
-            servo (number): 选择第几个舵机（伺服电机）1,2
+            servo (number): 选择第几个舵机（伺服电机）1,2,3,4
             angle (number): 设置舵机角度 0~180
         """
         if servo > 7 or servo < 0:
             raise ValueError('select servo error')
         if angle > 180 or angle < 0:
             raise ValueError('angle error,0~180')
-        i2c.write(CUTEBOT_ADDR, bytearray([servo + 5, angle, 0, 0]))
+        i2c.write(TPbot_ADDR, bytearray([servo + 10, angle, 0, 0]))
 
 
 if __name__ == '__main__':
-    ct = CUTEBOT()
+    tp = TPBOT()
 
-    ct.set_motors_speed(1, 100)
-    ct.set_car_light(left, 90, 90, 90)
-    ct.get_distance()
+    tp.set_motors(1, 100)
+    tp.get_distance()
