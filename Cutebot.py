@@ -16,8 +16,8 @@ class CUTEBOT(object):
 
     def __init__(self):
         i2c.init()
-        self.__pin_e = pin8
-        self.__pin_t = pin12
+        self.__pin_e = pin12
+        self.__pin_t = pin8
         self.__pinL = pin13
         self.__pinR = pin14
         self.__pinL.set_pull(self.__pinL.PULL_UP)
