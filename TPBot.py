@@ -97,15 +97,14 @@ class TPBOT(object):
             servo (number): 选择第几个舵机（伺服电机）1,2,3,4
             angle (number): 设置舵机角度 0~180
         """
-        if servo > 7 or servo < 0:
+        if servo > 4 or servo < 0:
             raise ValueError('select servo error')
         if angle > 180 or angle < 0:
             raise ValueError('angle error,0~180')
-        i2c.write(TPbot_ADDR, bytearray([servo + 10, angle, 0, 0]))
+        i2c.write(TPbot_ADDR, bytearray([servo + 9, angle, 0, 0]))
 
 
 if __name__ == '__main__':
     tp = TPBOT()
 
-    tp.set_motors()
     tp.get_distance()
