@@ -19,9 +19,8 @@ class TPBOT(object):
         self.__pinR = pin14
         self.__pinL.set_pull(self.__pinL.NO_PULL)
         self.__pinR.set_pull(self.__pinR.NO_PULL)
-        self.__pin_sonar = pin16
-        self.__pin_sonar_e = pin15
-        self.__pin_sonar.set_pull(self.__pin_sonar.NO_PULL)
+        self.__pin_t = pin16
+        self.__pin_e = pin15
 
     def set_motors_speed(self, left_wheel_speed: int, right_wheel_speed: int):
         """
@@ -58,11 +57,11 @@ class TPBOT(object):
         :param unit:检测距离单位 0 厘米 1 英尺
         :return:距离
         """
-        #self.__pin_sonar.read_digital()
-        self.__pin_sonar.write_digital(1)
+        self.__pin_e.read_digital()
+        self.__pin_t.write_digital(1)
         sleep_us(10)
-        self.__pin_sonar.write_digital(0)
-        ts = time_pulse_us(self.__pin_sonar_e, 1, 25000)
+        self.__pin_t.write_digital(0)
+        ts = time_pulse_us(self.__pin_e, 1, 25000)
 
         distance = ts * 9 / 6 / 58
         if unit == 0:
@@ -98,14 +97,16 @@ class TPBOT(object):
             servo (number): 选择第几个舵机（伺服电机）1,2,3,4
             angle (number): 设置舵机角度 0~180
         """
-        if servo > 4 or servo < 0:
+        if servo > 4 or servo <= 0:
             raise ValueError('select servo error')
+        servo = servo - 1
         if angle > 180 or angle < 0:
             raise ValueError('angle error,0~180')
-        i2c.write(TPbot_ADDR, bytearray([servo + 9, angle, 0, 0]))
+        i2c.write(TPbot_ADDR, bytearray([0x10+servo, angle, 0, 0]))
 
 
 if __name__ == '__main__':
     tp = TPBOT()
-
-    tp.get_distance()
+    tp.set_servo(3,0)
+    while True:
+        print(tp.get_distance())
