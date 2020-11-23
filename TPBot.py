@@ -20,6 +20,7 @@ class TPBOT(object):
         self.__pinL.set_pull(self.__pinL.NO_PULL)
         self.__pinR.set_pull(self.__pinR.NO_PULL)
         self.__pin_sonar = pin16
+        self.__pin_sonar_e= pin15
 
     def set_motors_speed(self, left_wheel_speed: int, right_wheel_speed: int):
         """
@@ -60,7 +61,7 @@ class TPBOT(object):
         self.__pin_sonar.write_digital(1)
         sleep_us(10)
         self.__pin_sonar.write_digital(0)
-        ts = time_pulse_us(self.__pin_sonar, 1, 25000)
+        ts = time_pulse_us(self._pin_sonar_e, 1, 25000)
 
         distance = ts * 9 / 6 / 58
         if unit == 0:
