@@ -99,8 +99,8 @@ class RINGBIT(object):
 if __name__ == '__main__':
     rb = RINGBIT(pin1, pin2)
 
-while True:
-    rb.set_motors_speed(50, 50)
-    sleep(1000)
-    rb.set_motors_speed(0, 0)
-    sleep(1000)
+    while True:
+        rb.set_motors_speed(50, 50)
+        sleep(1000)
+        rb.set_motors_speed(0, 0)
+        sleep(1000)
