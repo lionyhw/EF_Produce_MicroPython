@@ -88,9 +88,9 @@ class RINGBIT(object):
             return 11
         elif 150 <= val < 235:
             return 10
-        elif 235 <= val < 310:
+        elif 235 <= val < 300:
             return 1
-        elif 310 <= val < 600:
+        elif 300 <= val < 600:
             return 0
         else:
             print("Unknown ERROR")
