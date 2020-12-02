@@ -22,9 +22,9 @@ class RINGBIT(object):
         self.__right_wheel_pin.set_analog_period(10)
         self.__left_wheel_pin.set_analog_period(10)
         self.__module_pin = pin0
-        if self.__right_wheel_pin != pin1 and self.__right_wheel_pin != pin1:
+        if self.__left_wheel_pin != pin1 and self.__right_wheel_pin != pin1:
             self.__module_pin = pin1
-        if self.__right_wheel_pin != pin2 and self.__right_wheel_pin != pin2:
+        if self.__left_wheel_pin != pin2 and self.__right_wheel_pin != pin2:
             self.__module_pin = pin2
 
     def set_motors_speed(self, left_wheel_speed: int, right_wheel_speed: int):
