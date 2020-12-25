@@ -1,5 +1,4 @@
 from microbit import *
-import time
 
 Camera_Add = 0x14
 Card = 2
@@ -12,6 +11,7 @@ numberCards = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 letterCards = ["A", "B", "C", "D", "E"]
 otherCards = ["Mouse", "micro:bit", "Ruler", "Cat", "Peer", "Ship", "Apple", "Car", "Pan", "Dog", "Umbrella",
               "Airplane", "Clock", "Grape", "Cup", "Turn left", "Turn right", "Forward", "Stop", "Back"]
+colorList = ["Green", "Blue", "Yellow", "Black", "Red", "White"]
 
 
 class AILENS(object):
@@ -90,31 +90,51 @@ class AILENS(object):
     def get_card_content(self):
         Databuff = self.__get_image()
         if Databuff[0] == 2:
-            return numberCards[Databuff[1]-1]
+            return numberCards[Databuff[1] - 1]
         elif Databuff[0] == 4:
-            return letterCards[Databuff[1]-1]
+            return letterCards[Databuff[1] - 1]
         elif Databuff[0] == 3:
-            return otherCards[Databuff[1]-1]
+            return otherCards[Databuff[1] - 1]
         else:
             return "No Card"
 
     def get_card_data(self):
-        pass
+        CardData = []
+        Databuff = self.__get_image()
+        for i in range(7):
+            CardData[i] = Databuff[i + 2]
+        return CardData
 
     def get_color_type(self):
-        pass
+        Databuff = self.__get_image()
+        if Databuff[0] == 9:
+            return colorList[Databuff[1] - 1]
+        else:
+            return "No Color"
 
     def get_color_data(self):
-        pass
+        ColorData = []
+        Databuff = self.__get_image()
+        for i in range(7):
+            ColorData[i] = Databuff[i + 2]
+        return ColorData
 
     def get_track_data(self):
-        pass
+        TrackData = []
+        Databuff = self.__get_image()
+        for i in range(3):
+            TrackData[i] = Databuff[i + 2]
+        return TrackData
 
     def learn_object(self, learn_id):
-        pass
+        i2c.write(Camera_Add, bytearray([10, learn_id]))
 
     def get_learn_data(self):
-        pass
+        LearnData = []
+        Databuff = self.__get_image()
+        LearnData[0] = Databuff[1]
+        LearnData[1] = 100 - Databuff[2]
+        return LearnData
 
 
 if __name__ == '__main__':
