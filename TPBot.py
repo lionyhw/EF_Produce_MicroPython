@@ -102,11 +102,11 @@ class TPBOT(object):
         servo = servo - 1
         if angle > 180 or angle < 0:
             raise ValueError('angle error,0~180')
-        i2c.write(TPbot_ADDR, bytearray([0x10+servo, angle, 0, 0]))
+        i2c.write(TPbot_ADDR, bytearray([0x10 + servo, angle, 0, 0]))
 
 
 if __name__ == '__main__':
     tp = TPBOT()
-    tp.set_servo(3,0)
+    tp.set_servo(3, 0)
     while True:
         print(tp.get_distance())
