@@ -22,16 +22,13 @@ class AILENS(object):
     """
 
     def __init__(self):
+        self.__Data_buff = [0, 0, 0, 0, 0, 0, 0, 0, 0]
         i2c.init()
         sleep(5000)
         try:
             i2c.read(Camera_Add, 1)
         except:
             display.scroll("Init AILens Error!")
-
-    def __get_image(self):
-        Databuff = i2c.read(Camera_Add, 9)
-        return Databuff
 
     def switch_function(self, func):
         """基本描述
@@ -43,100 +40,176 @@ class AILENS(object):
         """
         i2c.write(Camera_Add, bytearray([0x20, func]))
 
-    def get_ball_color(self):
+    def get_image(self):
+        """基本描述
+
+        获取一帧画面
+
+        :return: 当前画面数据
         """
 
-        :return:
+        self.__Data_buff = i2c.read(Camera_Add, 9)
+        sleep(100)
+
+    def get_ball_color(self):
+        """基本描述
+
+        检测画面中的小球颜色
+
+        :return: 颜色
         """
-        Databuff = self.__get_image()
-        if Databuff[0] == 7:
-            if Databuff[1] == 1:
+        if self.__Data_buff[0] == 7:
+            if self.__Data_buff[1] == 1:
                 return "Blue"
-            elif Databuff == 2:
+            elif self.__Data_buff[1] == 2:
                 return "Red"
-            else:
-                return "No Ball"
+        else:
+            return "No Ball"
 
     def get_ball_data(self):
-        """
+        """基本描述
 
-        :return:
+        返回画面中小球的信息
+
+        :return: BallData [x,y,w,h,confidence,num,total]
         """
         BallData = []
-        Databuff = self.__get_image()
         for i in range(7):
-            BallData[i] = Databuff[i + 2]
+            BallData.append(self.__Data_buff[i + 2])
         return BallData
 
     def get_face(self):
-        """
+        """基本描述
+
+        判断画面中是否存在人脸
 
         :return:
         """
-        Databuff = self.__get_image()
-        return Databuff[0] == 6
+        return self.__Data_buff[0] == 6
 
     def get_face_data(self):
-        """
+        """基本描述
 
-        :return:
+        返回画面中人脸的信息
+
+        :return: FaceData [x,y,w,h,confidence,num,total]
         """
         FaceData = []
-        Databuff = self.__get_image()
         for i in range(7):
-            FaceData[i] = Databuff[i + 2]
+            FaceData.append(self.__Data_buff[i + 2])
         return FaceData
 
     def get_card_content(self):
-        Databuff = self.__get_image()
-        if Databuff[0] == 2:
-            return numberCards[Databuff[1] - 1]
-        elif Databuff[0] == 4:
-            return letterCards[Databuff[1] - 1]
-        elif Databuff[0] == 3:
-            return otherCards[Databuff[1] - 1]
+        """基本描述
+
+        返回卡片内容
+
+        :return: 卡片内容
+        """
+        if self.__Data_buff[0] == 2:
+            return numberCards[self.__Data_buff[1] - 1]
+        elif self.__Data_buff[0] == 4:
+            return letterCards[self.__Data_buff[1] - 1]
+        elif self.__Data_buff[0] == 3:
+            return otherCards[self.__Data_buff[1] - 1]
         else:
             return "No Card"
 
     def get_card_data(self):
+        """基本描述
+
+        返回画面中卡片的信息
+
+        :return: CardData [x,y,w,h,confidence,num,total]
+        """
         CardData = []
-        Databuff = self.__get_image()
         for i in range(7):
-            CardData[i] = Databuff[i + 2]
+            CardData.append(self.__Data_buff[i + 2])
         return CardData
 
     def get_color_type(self):
-        Databuff = self.__get_image()
-        if Databuff[0] == 9:
-            return colorList[Databuff[1] - 1]
+        """基本描述
+
+        返回卡片颜色
+
+        :return: 颜色
+        """
+        if self.__Data_buff[0] == 9:
+            return colorList[self.__Data_buff[1] - 1]
         else:
             return "No Color"
 
     def get_color_data(self):
+        """基本描述
+
+        返回画面中颜色的信息
+
+        :return: ColorData [x,y,w,h,confidence,num,total]
+        """
         ColorData = []
-        Databuff = self.__get_image()
         for i in range(7):
-            ColorData[i] = Databuff[i + 2]
+            ColorData.append(self.__Data_buff[i + 2])
         return ColorData
 
     def get_track_data(self):
-        TrackData = []
-        Databuff = self.__get_image()
+        """基本描述
+
+        返回画面中线段的信息
+
+        :return: LineData [angel,width,len]
+        """
+        LineData = []
         for i in range(3):
-            TrackData[i] = Databuff[i + 2]
-        return TrackData
+            LineData.append(self.__Data_buff[i + 1])
+        return LineData
 
     def learn_object(self, learn_id):
-        i2c.write(Camera_Add, bytearray([10, learn_id]))
+        """基本描述
+
+        以ID号来学习一个物品
+
+        :param learn_id: 要学习的ID号
+        """
+        if learn_id > 5 or learn_id < 1:
+            print("Learn id out of range")
+        else:
+            i2c.write(Camera_Add, bytearray([10, learn_id]))
 
     def get_learn_data(self):
-        LearnData = []
-        Databuff = self.__get_image()
-        LearnData[0] = Databuff[1]
-        LearnData[1] = 100 - Databuff[2]
+        """基本描述
+
+        返回画面中已学习物品的信息
+
+        :return: LearnData [ID,confidence]
+        """
+        LearnData = [self.__Data_buff[1], 100 - self.__Data_buff[2]]
         return LearnData
 
 
 if __name__ == '__main__':
     ai = AILENS()
-    ai.switch_function(Ball)
+    ai.switch_function(Learn)
+    while 0:
+        ai.get_image()
+        print(ai.get_ball_color())
+        print(ai.get_ball_data())
+    while 0:
+        ai.get_image()
+        print(ai.get_face)
+        print(ai.get_face_data())
+    while 0:
+        ai.get_image()
+        print(ai.get_card_content())
+        print(ai.get_card_data())
+    while 0:
+        ai.get_image()
+        print(ai.get_color_type())
+        print(ai.get_color_data())
+    while 0:
+        ai.get_image()
+        print(ai.get_track_data())
+    while 1:
+        ai.get_image()
+        if button_a.is_pressed():
+            ai.learn_object(1)
+        print(ai.get_learn_data())
