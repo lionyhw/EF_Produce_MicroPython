@@ -71,7 +71,7 @@ class AILENS(object):
 
         返回画面中小球的信息
 
-        :return: BallData [x,y,w,h,confidence,num,total]
+        :return: BallData [x,y,w,h,confidence,total,order]
         """
         BallData = []
         for i in range(7):
@@ -92,7 +92,7 @@ class AILENS(object):
 
         返回画面中人脸的信息
 
-        :return: FaceData [x,y,w,h,confidence,num,total]
+        :return: FaceData [x,y,w,h,confidence,total,order]
         """
         FaceData = []
         for i in range(7):
@@ -110,7 +110,7 @@ class AILENS(object):
             return numberCards[self.__Data_buff[1] - 1]
         elif self.__Data_buff[0] == 4:
             return letterCards[self.__Data_buff[1] - 1]
-        elif self.__Data_buff[0] == 3:
+        elif self.__Data_buff[0] == 3 and self.__Data_buff[1] < 20:
             return otherCards[self.__Data_buff[1] - 1]
         else:
             return "No Card"
@@ -120,7 +120,7 @@ class AILENS(object):
 
         返回画面中卡片的信息
 
-        :return: CardData [x,y,w,h,confidence,num,total]
+        :return: CardData [x,y,w,h,confidence,total,order]
         """
         CardData = []
         for i in range(7):
@@ -144,7 +144,7 @@ class AILENS(object):
 
         返回画面中颜色的信息
 
-        :return: ColorData [x,y,w,h,confidence,num,total]
+        :return: ColorData [x,y,w,h,confidence,total,order]
         """
         ColorData = []
         for i in range(7):
