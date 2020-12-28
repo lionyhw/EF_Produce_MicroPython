@@ -110,7 +110,7 @@ class AILENS(object):
             return numberCards[self.__Data_buff[1] - 1]
         elif self.__Data_buff[0] == 4:
             return letterCards[self.__Data_buff[1] - 1]
-        elif self.__Data_buff[0] == 3 and self.__Data_buff[1] < 20:
+        elif self.__Data_buff[0] == 3 and self.__Data_buff[1] < 21:
             return otherCards[self.__Data_buff[1] - 1]
         else:
             return "No Card"
