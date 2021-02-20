@@ -44,7 +44,10 @@ class WUKONG(object):
             raise ValueError('select servo error')
         if angle > 180 or angle < 0:
             raise ValueError('angle error,0~180')
-        i2c.write(WUKONG_ADDR, bytearray([servo + 3, angle, 0, 0]))
+        if servo == 7:
+            i2c.write(WUKONG_ADDR, bytearray([0x10, angle, 0, 0]))
+        else:
+            i2c.write(WUKONG_ADDR, bytearray([servo + 3, angle, 0, 0]))
 
     def set_light(self, light):
         """基本描述
