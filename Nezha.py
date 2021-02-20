@@ -8,12 +8,13 @@ J4 = pin16
 NEZHA_ADDR = 0x10
 
 
-class CUTEBOT(object):
+class NEZHA(object):
     """基本描述
 
     哪吒RJ11主控板
 
     """
+
     def __init__(self):
         i2c.init()
 
@@ -48,14 +49,8 @@ class CUTEBOT(object):
             raise ValueError('select servo error,1,2,3,4')
         if angle > 180 or angle < 0:
             raise ValueError('angle error,0~180')
-        if servo == 1:
-            i2c.write(NEZHA_ADDR, bytearray([0x10, angle, 0, 0]))
-        elif servo == 2:
-            i2c.write(NEZHA_ADDR, bytearray([0x10, angle, 0, 0]))
-        elif servo == 3:
-            i2c.write(NEZHA_ADDR, bytearray([0x10, angle, 0, 0]))
-        elif servo == 4:
-            i2c.write(NEZHA_ADDR, bytearray([0x10, angle, 0, 0]))
+
+        i2c.write(NEZHA_ADDR, bytearray([0x10 + servo - 1, angle, 0, 0]))
 
 
 if __name__ == '__main__':
