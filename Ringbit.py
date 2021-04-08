@@ -39,20 +39,24 @@ class RINGBIT(object):
         if right_wheel_speed > 100 or right_wheel_speed < -100:
             raise ValueError('select motor error,1,2,3,4')
         if left_wheel_speed > 0:
-            left_wheel_speed = ((left_wheel_speed - 0) * (256 - 153.6)) / (100 - 0) + 153.6
+            left_wheel_speed = ((left_wheel_speed - 0) *
+                                (256 - 153.6)) / (100 - 0) + 153.6
             self.__left_wheel_pin.write_analog(left_wheel_speed)
         elif left_wheel_speed < 0:
-            left_wheel_speed = ((left_wheel_speed - 0) * (51.2 - 153.6)) / (-100 - 0) + 153.6
+            left_wheel_speed = ((left_wheel_speed - 0) *
+                                (51.2 - 153.6)) / (-100 - 0) + 153.6
             self.__left_wheel_pin.write_analog(left_wheel_speed)
         else:
             self.__left_wheel_pin.write_analog(153.6)
 
         right_wheel_speed = right_wheel_speed * -1
         if right_wheel_speed > 0:
-            right_wheel_speed = ((right_wheel_speed - 0) * (256 - 153.6)) / (100 - 0) + 153.6
+            right_wheel_speed = ((right_wheel_speed - 0)
+                                 * (256 - 153.6)) / (100 - 0) + 153.6
             self.__right_wheel_pin.write_analog(right_wheel_speed)
         elif right_wheel_speed < 0:
-            right_wheel_speed = ((right_wheel_speed - 0) * (51.2 - 153.6)) / (-100 - 0) + 153.6
+            right_wheel_speed = ((right_wheel_speed - 0)
+                                 * (51.2 - 153.6)) / (-100 - 0) + 153.6
             self.__right_wheel_pin.write_analog(right_wheel_speed)
         else:
             self.__right_wheel_pin.write_analog(153.6)

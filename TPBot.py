@@ -37,7 +37,8 @@ class TPBOT(object):
         self.__direction = self.__direction if right_wheel_speed > 0 else self.__direction + 2
         left_wheel_speed = left_wheel_speed if left_wheel_speed > 0 else left_wheel_speed * -1
         right_wheel_speed = right_wheel_speed if right_wheel_speed > 0 else right_wheel_speed * -1
-        i2c.write(TPbot_ADDR, bytearray([0x01, left_wheel_speed, right_wheel_speed, self.__direction]))
+        i2c.write(TPbot_ADDR, bytearray(
+            [0x01, left_wheel_speed, right_wheel_speed, self.__direction]))
 
     def set_car_light(self, R: int, G: int, B: int):
         """
