@@ -68,6 +68,12 @@ class IOT(object):
         return self.__waitResponse()
     
     def connectKidsiot(self, userToken:str, topic:str):
+        """
+        连接到 Kidsiot 
+        :param userToken: Kidsiot 平台用户唯一识别码
+        :param topic: 设备唯一识别码
+        :return: None
+        """
         self.__userToken = userToken
         self.__topic = topic
         self.__sendAT("AT+CIPSTART=\"TCP\",\"139.159.161.57\",5555", 5000)
@@ -76,14 +82,54 @@ class IOT(object):
         self.__sendAT(toSendStr, 100)
 
     def uploadKidsiot(self,data:int):
+        """
+        设置要发送到 Kidsiot 的数据并且发送上去
+        :param data: 要发送的数据
+        :return: None
+        """
         toSendStr = "{\"topic\":\"" + self.__topic + "\",\"userToken\":\"" + self.__userToken + "\",\"op\":\"up\",\"data\":\"" + data + "\"}"
         self.__sendAT("AT+CIPSEND="+str(len(toSendStr)+2), 500)
         self.__sendAT(toSendStr, 100)
 
     def disconnectKidsiot(self):
+        """
+        断开与 Kidsiot 的连接
+        :return: None
+        """
         toSendStr = "{\"topic\":\"" + self.__topic + "\",\"userToken\":\"" + self.__userToken + "\",\"op\":\"close\"}"
         self.__sendAT("AT+CIPSEND="+str(len(toSendStr)+2), 500)
         self.__sendAT(toSendStr, 100)
+
+    def kidsiotSwitchOn(self):
+        """
+        Kidsiot平台按下打开开关
+        :return: 是否打开开关
+        """
+        uart_str = ""
+        timeOut = running_time()
+        while True:
+            if uart.any():
+                uart_str = str(uart.read(), 'UTF-8') + uart_str
+                if "switchon" in uart_str:
+                    return True
+            elif running_time() - timeOut > 3000:
+                return False
+
+    def kidsiotSwitchOff(self):
+        """
+        Kidsiot平台按下关闭开关
+        :return: 是否关闭开关
+        """
+        uart_str = ""
+        timeOut = running_time()
+        while True:
+            if uart.any():
+                uart_str = str(uart.read(), 'UTF-8') + uart_str
+                if "switchoff" in uart_str:
+                    return True
+            elif running_time() - timeOut > 3000:
+                return False
+
 
 if __name__ == '__main__':
     iot = IOT()
