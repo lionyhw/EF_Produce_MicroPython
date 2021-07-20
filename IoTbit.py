@@ -32,6 +32,9 @@ class IOT(object):
                     uart_str = " "
             elif running_time() - timeOut > 8000:
                 return False
+    def __clearBuff(self):
+        uart_str = ""
+        uart_str = str(uart.read(), 'UTF-8')
 
     def connectWIFI(self, ssid: str, pw: str):
         """
@@ -40,16 +43,16 @@ class IOT(object):
         :param pw: Wi-Fi无线网络密码
         :return: 是否连接成功
         """
+        self.__clearBuff()
         self.__sendAT("AT+CWJAP=\"" + ssid + "\",\"" + pw + "\"", 500)
         return self.__waitResponse()
 
     def connectThingSpeak(self):
         """
-        连接Wi-Fi，只支持2.4G无线网络
-        :param ssid:Wi-Fi 无线网络名
-        :param pw: Wi-Fi 无线网络密码
+        连接ThingSpeak，发送数据后自动断开
         :return: 是否连接成功
         """
+        self.__clearBuff()
         text = "AT+CIPSTART=\"TCP\",\"api.thingspeak.com\",80"
         self.__sendAT(text, 500)
         return self.__waitResponse()
@@ -74,6 +77,7 @@ class IOT(object):
         :param topic: 设备唯一识别码
         :return: None
         """
+        self.__clearBuff()
         self.__userToken = userToken
         self.__topic = topic
         self.__sendAT("AT+CIPSTART=\"TCP\",\"139.159.161.57\",5555", 5000)
@@ -87,6 +91,7 @@ class IOT(object):
         :param data: 要发送的数据
         :return: None
         """
+        self.__clearBuff()
         toSendStr = "{\"topic\":\"" + self.__topic + "\",\"userToken\":\"" + self.__userToken + "\",\"op\":\"up\",\"data\":\"" + data + "\"}"
         self.__sendAT("AT+CIPSEND="+str(len(toSendStr)+2), 500)
         self.__sendAT(toSendStr, 100)
@@ -96,6 +101,7 @@ class IOT(object):
         断开与 Kidsiot 的连接
         :return: None
         """
+        self.__clearBuff()
         toSendStr = "{\"topic\":\"" + self.__topic + "\",\"userToken\":\"" + self.__userToken + "\",\"op\":\"close\"}"
         self.__sendAT("AT+CIPSEND="+str(len(toSendStr)+2), 500)
         self.__sendAT(toSendStr, 100)
